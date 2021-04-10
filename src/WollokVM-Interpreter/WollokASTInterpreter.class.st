@@ -39,16 +39,48 @@ WollokASTInterpreter >> interpretProgram: aFileNode [
 	^ lastValue	
 ]
 
+{ #category : #'as yet unclassified' }
+WollokASTInterpreter >> isFalse: object [
+
+^ object literalValue = false
+ 
+
+
+
+
+]
+
 { #category : #bindings }
 WollokASTInterpreter >> resolve: aString [ 
 	
 	^ bindings at: aString
 ]
 
+{ #category : #'as yet unclassified' }
+WollokASTInterpreter >> visitBinaryOperation: aWollokBinaryOperationNode [ 
+| left right result |
+left := aWollokBinaryOperationNode leftOperand acceptVisitor: self.
+right := aWollokBinaryOperationNode rightOperand acceptVisitor: self.
+result := left literalValue > right literalValue.
+^ self wollokBooleanFrom: result
+
+
+
+
+]
+
 { #category : #visiting }
 WollokASTInterpreter >> visitNumberLiteral: aWollokNumberLiteralNode [ 
 
 	^ self wollokNumberFrom: aWollokNumberLiteralNode numberValue
+]
+
+{ #category : #literals }
+WollokASTInterpreter >> wollokBooleanFrom: anBoolean [
+	^ WollokVMLiteral new
+		wollokClass: (self resolve: 'wollok.lang.Boolean');
+		literalValue: anBoolean;
+		yourself
 ]
 
 { #category : #literals }
