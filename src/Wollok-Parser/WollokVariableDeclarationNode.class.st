@@ -37,6 +37,11 @@ WollokVariableDeclarationNode >> equalToken: aSmaCCToken [
 	equalToken := aSmaCCToken
 ]
 
+{ #category : #'as yet unclassified' }
+WollokVariableDeclarationNode >> identificador [
+	^variable name value
+]
+
 { #category : #generated }
 WollokVariableDeclarationNode >> nodeVariables [
 	^ #(#variable #right)
@@ -83,6 +88,11 @@ WollokVariableDeclarationNode >> variable: aWollokVariableNode [
 	variable := aWollokVariableNode.
 	self variable notNil
 		ifTrue: [ self variable parent: self ]
+]
+
+{ #category : #'as yet unclassified' }
+WollokVariableDeclarationNode >> variableName [
+	^variable name value
 ]
 
 { #category : #generated }

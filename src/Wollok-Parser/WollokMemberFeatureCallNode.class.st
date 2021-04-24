@@ -128,6 +128,12 @@ WollokMemberFeatureCallNode >> rightParenToken: aSmaCCToken [
 ]
 
 { #category : #generated }
+WollokMemberFeatureCallNode >> selector [
+"El selector incluye en su identificador la cantidad de argumentos que recibe"
+	^feature value, arguments size asString .
+]
+
+{ #category : #generated }
 WollokMemberFeatureCallNode >> tokenVariables [
 	^ #(#periodToken #feature #leftParenToken #rightParenToken #nullSafe)
 ]

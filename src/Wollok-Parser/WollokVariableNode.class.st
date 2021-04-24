@@ -12,6 +12,11 @@ WollokVariableNode >> acceptVisitor: anAbstractNodeVisitor [
 	^ anAbstractNodeVisitor visitVariable: self
 ]
 
+{ #category : #'as yet unclassified' }
+WollokVariableNode >> identificador [
+	^name value
+]
+
 { #category : #generated }
 WollokVariableNode >> name [
 	^ name

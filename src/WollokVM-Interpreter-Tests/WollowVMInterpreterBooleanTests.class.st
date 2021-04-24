@@ -39,6 +39,14 @@ WollowVMInterpreterBooleanTests >> testLiteralTrueReturnsCorrectValue [
 ]
 
 { #category : #tests }
+WollowVMInterpreterBooleanTests >> testNotTrueReturnsCorrectValue [
+" TEST AGREGADO"
+	| returnValue |
+	returnValue := self interpretExpression: 'not true'.
+	self assert: (interpreter isFalse: returnValue)
+]
+
+{ #category : #tests }
 WollowVMInterpreterBooleanTests >> testTrueAndFalseReturnsCorrectValue [
 
 	| returnValue |

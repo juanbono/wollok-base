@@ -2,10 +2,21 @@ Class {
 	#name : #WollokVMObject,
 	#superclass : #Object,
 	#instVars : [
-		'wollokClass'
+		'wollokClass',
+		'ambiente'
 	],
 	#category : #'WollokVM-Interpreter'
 }
+
+{ #category : #accessing }
+WollokVMObject >> ambiente [
+	^ ambiente
+]
+
+{ #category : #accessing }
+WollokVMObject >> ambiente: anObject [
+	ambiente := anObject
+]
 
 { #category : #UI }
 WollokVMObject >> gtInspectorVariablesIn: composite [
@@ -22,10 +33,20 @@ WollokVMObject >> gtInspectorVariablesIn: composite [
 				ifNotNil: [ selection value ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+WollokVMObject >> inicializarAtributo: identificador  conValor: aWollokVMObject [ 
+	ambiente agregarReferencia: identificador inicializadaEn: aWollokVMObject 
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMObject >> initialize [
+super initialize.
+
+]
+
 { #category : #accessing }
 WollokVMObject >> instanceVariablesValues [
 
-	self flag: #todo.
 	^ #()
 ]
 
@@ -41,6 +62,11 @@ WollokVMObject >> printOn: aStream [
 		nextPut: $)
 
 		 
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMObject >> recibirMensaje: aString con: aCollection [ 
+	self shouldBeImplemented.
 ]
 
 { #category : #accessing }

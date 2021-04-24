@@ -10,6 +10,11 @@ WollokAbstractNodeNode >> acceptVisitor: anAbstractNodeVisitor [
 ]
 
 { #category : #accessing }
+WollokAbstractNodeNode >> esFinal [
+^false
+]
+
+{ #category : #accessing }
 WollokAbstractNodeNode >> methodNode [
 	
 	"I'm not a method declaration"

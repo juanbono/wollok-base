@@ -16,6 +16,11 @@ WollokSuperInvocationNode >> acceptVisitor: anAbstractNodeVisitor [
 	^ anAbstractNodeVisitor visitSuperInvocation: self
 ]
 
+{ #category : #'as yet unclassified' }
+WollokSuperInvocationNode >> argumentos [
+	self shouldBeImplemented.
+]
+
 { #category : #generated }
 WollokSuperInvocationNode >> arguments [
 	^ arguments

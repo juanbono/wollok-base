@@ -32,6 +32,12 @@ WollokConstructorCallNode >> argumentList: aWollokAbstractNodeNode [
 		ifTrue: [ self argumentList parent: self ]
 ]
 
+{ #category : #'as yet unclassified' }
+WollokConstructorCallNode >> argumentos [
+	"self shouldBeImplemented."
+	^ Dictionary new
+]
+
 { #category : #generated }
 WollokConstructorCallNode >> classRef [
 	^ classRef

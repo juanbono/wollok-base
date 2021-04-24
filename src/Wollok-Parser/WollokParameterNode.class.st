@@ -13,6 +13,11 @@ WollokParameterNode >> acceptVisitor: anAbstractNodeVisitor [
 	^ anAbstractNodeVisitor visitParameter: self
 ]
 
+{ #category : #'as yet unclassified' }
+WollokParameterNode >> identificador [
+	^ parameter value
+]
+
 { #category : #generated }
 WollokParameterNode >> isVarArg [
 	^ isVarArg

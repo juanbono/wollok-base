@@ -7,6 +7,11 @@ Class {
 	#category : #'WollokVM-Interpreter'
 }
 
+{ #category : #'as yet unclassified' }
+WollokVMLiteral >> booleanValue [
+	self shouldBeImplemented.
+]
+
 { #category : #accessing }
 WollokVMLiteral >> literalValue [
 	

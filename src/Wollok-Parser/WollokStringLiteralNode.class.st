@@ -13,6 +13,11 @@ WollokStringLiteralNode >> acceptVisitor: anAbstractNodeVisitor [
 ]
 
 { #category : #generated }
+WollokStringLiteralNode >> stringValue [
+ ^value value trimBoth:[:char | char = $"]
+]
+
+{ #category : #generated }
 WollokStringLiteralNode >> tokenVariables [
 	^ #(#value)
 ]

@@ -7,14 +7,15 @@ Class {
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterpreter [
 
-	| anAST aWollokClass |
+	| anAST aWollokClass superClase|
 	
 	anAST := WollokParser parse: aString.
 	anAST attributeNamed: #source put: aString.
-
+	
 	aWollokClass := WollokVMClass new
 		name: aName;
 		ast: anAST;
+		configurar;
 		yourself.
 	
 	anInterpreter addBinding: aName value: aWollokClass.

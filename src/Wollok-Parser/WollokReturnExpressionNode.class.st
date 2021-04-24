@@ -14,6 +14,11 @@ WollokReturnExpressionNode >> acceptVisitor: anAbstractNodeVisitor [
 ]
 
 { #category : #generated }
+WollokReturnExpressionNode >> esFinal [
+ ^true
+]
+
+{ #category : #generated }
 WollokReturnExpressionNode >> expression [
 	^ expression
 ]

@@ -12,11 +12,11 @@ WollowVMInterpreterSimpleRecursionTest >> setUp [
 	interpreter addBindingOfClass: 'MyClass' fromString: '
 class	MyClass {  
 	method doSomething(){
-		return recursiveCall(0)
+		return self.recursiveCall(0)
 	}
 	
 	method recursiveCall(aValue) { 
-		if(aValue = 42)
+		if(aValue == 42)
 			return aValue
 		else
 			return self.recursiveCall(aValue + 1)
@@ -31,5 +31,5 @@ WollowVMInterpreterSimpleRecursionTest >> testSendingRecursiveCallReturnsCorrect
 	| anObject |
 	anObject := self interpretExpression: 'new MyClass().doSomething()'.
 	
-	self assert: anObject literalValue equals: '42'
+	self assert: anObject literalValue equals: 42
 ]

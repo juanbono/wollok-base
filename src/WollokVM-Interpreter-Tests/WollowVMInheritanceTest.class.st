@@ -29,6 +29,9 @@ WollowVMInheritanceTest >> setUp [
 		method setA(aValue){
 			a = aValue
 		}
+		method isAlwaysRight() { 
+			return true
+		}
 	}
 	'.
 	
@@ -47,7 +50,7 @@ WollowVMInheritanceTest >> testInstanceVariableCanBeModified [
 	| anObject |
 	anObject := self interpretExpression: '
 	var a = new MyClass()
-	a.setB(77)
+	a.setA(77)
 	a.getA()'.
 	
 	self assert: anObject literalValue equals: 78
@@ -60,6 +63,15 @@ WollowVMInheritanceTest >> testInstanceVariableIsInitializedWithInitializeMethod
 	anObject := self interpretExpression: 'new MyClass().getA()'.
 	
 	self assert: anObject literalValue equals: 3
+]
+
+{ #category : #running }
+WollowVMInheritanceTest >> testSendingAMessageInSuperclassThatReturnsIntegerConstantReturnsConstantValue [
+
+	| anObject |
+	anObject := self interpretExpression: 'new MyClass().isAlwaysRight()'.
+	
+	self assert: anObject literalValue equals: true
 ]
 
 { #category : #running }

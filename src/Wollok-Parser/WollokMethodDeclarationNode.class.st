@@ -155,6 +155,12 @@ WollokMethodDeclarationNode >> rightParenToken: aSmaCCToken [
 	rightParenToken := aSmaCCToken
 ]
 
+{ #category : #'as yet unclassified' }
+WollokMethodDeclarationNode >> selector [
+"El selector incluye en su identificador la cantidad de argumentos que recibe"
+	^name value, parameters size asString .
+]
+
 { #category : #generated }
 WollokMethodDeclarationNode >> tokenVariables [
 	^ #(#methodToken #name #leftParenToken #rightParenToken #expressionReturns #native #override)
