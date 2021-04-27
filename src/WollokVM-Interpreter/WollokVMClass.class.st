@@ -6,7 +6,8 @@ Class {
 		'ast',
 		'metodos',
 		'atributos',
-		'superClase'
+		'superClase',
+		'nativos'
 	],
 	#category : #'WollokVM-Interpreter'
 }
@@ -60,6 +61,11 @@ WollokVMClass >> atributos [
 	^ atributos
 ]
 
+{ #category : #'as yet unclassified' }
+WollokVMClass >> buscarNativo: selector [ 
+	^nativos at: selector ifAbsent: nil
+]
+
 { #category : #accessing }
 WollokVMClass >> configurar [ 
 |posibleSuperClase |
@@ -79,11 +85,45 @@ superClase := (name = WollokASTInterpreter baseClassName)
 ]
 
 { #category : #accessing }
+WollokVMClass >> configurar: definicionesNativas [ 
+|posibleSuperClase |
+ast elements first members do:
+	[ :met | self agregarMetodo: met ].
+
+ast elements first variables do:
+	[ :atr | self agregarAtributo: atr ].
+
+
+definicionesNativas do: [:definicion |
+	nativos at: (definicion at:1) put: 
+		(WollokVMNative new 
+			expresion: (definicion at:2);
+			claseRetorno: (definicion at:3);
+			tipo: (definicion at:4);
+			yourself)
+		]. 
+
+posibleSuperClase := ast elements first superclass.
+superClase := (name = WollokASTInterpreter baseClassName) 
+	ifTrue: [ nil ]
+	ifFalse: [ posibleSuperClase 
+		ifNil: [ WollokASTInterpreter baseClassName ] 
+		ifNotNil: [posibleSuperClase asWollokQualifiedName ]
+ 	].
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMClass >> ejecutarNativo: selector con: argumentos sobre: receptor [ 
+	^(nativos at:selector) value: receptor literalValue value: (argumentos collect: [ :a | a literalValue ])
+]
+
+{ #category : #accessing }
 WollokVMClass >> initialize [ 
 
 super initialize.
 metodos := Dictionary new.
 atributos := Dictionary new.
+nativos := Dictionary new.
 ]
 
 { #category : #accessing }

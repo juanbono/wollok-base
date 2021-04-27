@@ -72,11 +72,24 @@ self ambienteActual: nuevoAmbiente.
 metodo argumentos values with: argumentosEvaluados do:[ :arg :value | 
 	self ambienteActual agregarReferencia: (arg acceptVisitor: self) inicializadaEn: value ].
 
-resultado := metodo ast acceptVisitor: self.
+
+resultado := metodo nativo 
+	ifFalse: [metodo ast acceptVisitor: self]
+	ifTrue: [self ejecutarNativo: metodo con: argumentosEvaluados sobre:receptor].
 
 self ambienteActual: (self ambienteActual ambienteAnterior).
 
 ^ resultado 
+]
+
+{ #category : #'as yet unclassified' }
+WollokASTInterpreter >> ejecutarNativo: metodo con: argumentos sobre: receptor [
+|nativo resultado|
+nativo := metodo buscarNativo.
+
+resultado := nativo ejecutarCon: (argumentos collect:[:a | a literalValue]) sobre: receptor literalValue.
+
+^ self wollokLiteralFrom: resultado class: nativo claseRetorno   
 ]
 
 { #category : #interpreting }
@@ -176,8 +189,9 @@ WollokASTInterpreter >> visitAssignment: aWollokAssignmentNode [
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> visitBinaryOperation: aWollokBinaryOperationNode [ 
-| left right result operations className classNames|
+| receptor selector resultado metodo objetoAnterior|
 
+"
 operations := 	{
 	'>' -> [ :a :b | a > b ].
 	'<' -> [ :a :b | a < b ].
@@ -197,22 +211,34 @@ classNames := {
 	'<' -> 'Boolean'.
 	'*' -> 'Number'.
 	'-' -> 'Number'.
-	'+' -> 'Number'. "FALTA GENERALIZAR"
+	'+' -> 'Number'. 
 	'/' -> 'Number'.
 	'&&' -> 'Boolean'.
 	'||' -> 'Boolean'.
 	'%' -> 'Number'.
 	'++' -> 'String'.
-	'==' -> 'Number'  "FALTA GENERALIZAR"
+	'==' -> 'Number'  
 	} asDictionary .
+"
+receptor := aWollokBinaryOperationNode leftOperand acceptVisitor: self.
+"argumento := aWollokBinaryOperationNode rightOperand acceptVisitor: self."
+selector :=  aWollokBinaryOperationNode selector.
 
-left := aWollokBinaryOperationNode leftOperand acceptVisitor: self.
-right := aWollokBinaryOperationNode rightOperand acceptVisitor: self.
+	objetoAnterior := self objetoActual.
+	self objetoActual: receptor.
+	
+metodo := self lookUp: selector desde: receptor wollokClass.
+resultado := self ejecutar: metodo con: {aWollokBinaryOperationNode rightOperand} sobre: receptor.
 
+"metodo nativo 
+	ifTrue: [ resultado := self ejecutarNativo: metodo buscarNativo con: #(aWollokBinaryOperationNode rightOperand) sobre: receptor]
+	ifFalse: [  ]
 result := (operations at: aWollokBinaryOperationNode operation value) 
 	value: left literalValue value: right literalValue.
 className := classNames at: aWollokBinaryOperationNode operation value.
-^ self wollokLiteralFrom: result class:className
+"
+self objetoActual: objetoAnterior.
+^ resultado
 ]
 
 { #category : #'as yet unclassified' }

@@ -5,7 +5,8 @@ Class {
 		'ast',
 		'selector',
 		'argumentos',
-		'clase'
+		'clase',
+		'nativo'
 	],
 	#category : #'WollokVM-Interpreter'
 }
@@ -18,6 +19,12 @@ WollokVMMethod >> argumentos [
 { #category : #accessing }
 WollokVMMethod >> ast [
 	^ ast
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMMethod >> buscarNativo [
+	^clase buscarNativo: selector 
+		
 ]
 
 { #category : #accessing }
@@ -33,15 +40,27 @@ WollokVMMethod >> clase: anObject [
 { #category : #'as yet unclassified' }
 WollokVMMethod >> configurar: node [ 
 	ast := node. 
+	nativo := ast isNative.
 	ast parameters do: 
 		[ :par | argumentos at: par identificador put: par  ]
 	
 ]
 
 { #category : #'as yet unclassified' }
+WollokVMMethod >> ejecutarNativoCon: aCollection sobre: aWollokVMLiteral [ 
+	^clase ejecutarNativo: selector con:aCollection sobre:aWollokVMLiteral
+		
+]
+
+{ #category : #'as yet unclassified' }
 WollokVMMethod >> initialize [
 	argumentos := Dictionary new
 	
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMMethod >> nativo [
+	^ nativo
 ]
 
 { #category : #accessing }

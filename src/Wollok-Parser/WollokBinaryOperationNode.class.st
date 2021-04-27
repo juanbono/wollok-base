@@ -58,6 +58,11 @@ WollokBinaryOperationNode >> rightOperand: aWollokAbstractNodeNode [
 ]
 
 { #category : #generated }
+WollokBinaryOperationNode >> selector [
+	^ operation value , '1'.
+]
+
+{ #category : #generated }
 WollokBinaryOperationNode >> tokenVariables [
 	^ #(#operation)
 ]

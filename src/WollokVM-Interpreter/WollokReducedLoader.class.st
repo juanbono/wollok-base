@@ -7,7 +7,7 @@ Class {
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterpreter [
 
-	| anAST aWollokClass superClase|
+	| anAST aWollokClass |
 	
 	anAST := WollokParser parse: aString.
 	anAST attributeNamed: #source put: aString.
@@ -22,24 +22,71 @@ WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterp
 ]
 
 { #category : #'as yet unclassified' }
+WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterpreter natives: nativos [
+
+	| anAST aWollokClass |
+	
+	anAST := WollokParser parse: aString.
+	anAST attributeNamed: #source put: aString.
+	
+	aWollokClass := WollokVMClass new
+		name: aName;
+		ast: anAST;
+		configurar: nativos;
+		yourself.
+	
+	anInterpreter addBinding: aName value: aWollokClass.
+]
+
+{ #category : #'as yet unclassified' }
 WollokReducedLoader >> addBindingOfClass: aName of: selector in: anInterpreter [
 
 	self addBindingOfClass: aName fromString: (self perform: selector) in: anInterpreter 
 ]
 
 { #category : #'as yet unclassified' }
+WollokReducedLoader >> addBindingOfClass: aName of: selector in: anInterpreter natives: nativos [
+
+	self addBindingOfClass: aName fromString: (self perform: selector) in: anInterpreter natives: nativos
+]
+
+{ #category : #'as yet unclassified' }
 WollokReducedLoader >> loadInto: anInterpreter [
 
 	self addBindingOfClass: 'wollok.lang.Object' of: #wollokLangObject in: anInterpreter.
-	self addBindingOfClass: 'wollok.lang.Number' of: #wollokLangNumber in: anInterpreter.	
-	self addBindingOfClass: 'wollok.lang.Boolean' of: #wollokLangBoolean in: anInterpreter.
+	self addBindingOfClass: 'wollok.lang.Number' of: #wollokLangNumber in: anInterpreter natives: {
+		{'truncate1'. [:r :args | (r truncateTo: (1/10 raisedTo: args first)) asFloat ]. 'Number'.'comun'}.
+		{'>1'. [ :a :b | a > b ]. 'Boolean'. 'binario'}.
+		{'<1'. [ :a :b | a < b ]. 'Boolean'. 'binario'}.
+		{'==1'.[ :a :b | a = b ]. 'Boolean'. 'binario'}.
+		{'*1'. [ :a :b | a * b ]. 'Number'. 'binario'}.
+		{ '-1'.[ :a :b | a - b ]. 'Number'. 'binario'}.
+		{'/1'. [ :a :b | a / b ]. 'Number'. 'binario'}.
+		{'+1'. [ :a :b | a + b ]. 'Number'. 'binario'}.
+		{'%1'. [ :a :b | a % b ]. 'Number'. 'binario'}.
+		{'toString0'. [ :a :b | a printString ]. 'String'. 'comun'}.
+		} .
 
-	self addBindingOfClass: 'wollok.lang.Collection' of: #wollokLangCollection in: anInterpreter.	
-	self addBindingOfClass: 'wollok.lang.Set' of: #wollokLangSet in: anInterpreter.
-	self addBindingOfClass: 'wollok.lang.List' of: #wollokLangList in: anInterpreter.
+	self addBindingOfClass: 'wollok.lang.Boolean' of: #wollokLangBoolean in: anInterpreter natives: {
+		{'&&1'. [ :a :b | a & b ]. 'Boolean'. 'binario'}.
+		{'||1'. [ :a :b | a | b ]. 'Boolean'. 'binario'}.
+		{'==1'.[ :a :b | a = b ]. 'Boolean'. 'binario'}.
+		} .
 
-	self addBindingOfClass: 'wollok.lang.String' of: #wollokLangString in: anInterpreter.
-	self addBindingOfClass: 'wollok.lang.Exception' of: #wollokLangException in: anInterpreter.							
+	self addBindingOfClass: 'wollok.lang.Collection' of: #wollokLangCollection in: anInterpreter. 
+	self addBindingOfClass: 'wollok.lang.Set' of: #wollokLangSet in: anInterpreter natives: {	
+		{'++1'.[ :a :b | a , b ]. 'List'. 'binario'}.
+		} .
+	self addBindingOfClass: 'wollok.lang.List' of: #wollokLangList in: anInterpreter natives: {	
+		{'++1'.[ :a :b | a , b ]. 'List'. 'binario'}.
+		}.
+
+	self addBindingOfClass: 'wollok.lang.String' of: #wollokLangString in: anInterpreter natives: {
+		{'concat1'. [ :a :b | a , b first]. 'String'. 'comun'}.
+		{'toString0'. [ :a :b | a ]. 'String'. 'comun'}.
+		}.
+
+	self addBindingOfClass: 'wollok.lang.Exception' of: #wollokLangException in: anInterpreter.							 
 ]
 
 { #category : #'as yet unclassified' }
