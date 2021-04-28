@@ -53,7 +53,9 @@ WollokReducedLoader >> addBindingOfClass: aName of: selector in: anInterpreter n
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> loadInto: anInterpreter [
 
-	self addBindingOfClass: 'wollok.lang.Object' of: #wollokLangObject in: anInterpreter.
+	self addBindingOfClass: 'wollok.lang.Object' of: #wollokLangObject in: anInterpreter natives: {
+		{'===1'.[ :a :b | a == b ]. 'Boolean'. 'binario'}.
+		}.
 	self addBindingOfClass: 'wollok.lang.Number' of: #wollokLangNumber in: anInterpreter natives: {
 		{'truncate1'. [:r :args | (r truncateTo: (1/10 raisedTo: args first)) asFloat ]. 'Number'.'comun'}.
 		{'>1'. [ :a :b | a > b ]. 'Boolean'. 'binario'}.
@@ -65,6 +67,7 @@ WollokReducedLoader >> loadInto: anInterpreter [
 		{'+1'. [ :a :b | a + b ]. 'Number'. 'binario'}.
 		{'%1'. [ :a :b | a % b ]. 'Number'. 'binario'}.
 		{'toString0'. [ :a :b | a printString ]. 'String'. 'comun'}.
+		{'===1'.[ :a :b | a == b ]. 'Boolean'. 'binario'}.
 		} .
 
 	self addBindingOfClass: 'wollok.lang.Boolean' of: #wollokLangBoolean in: anInterpreter natives: {
@@ -75,10 +78,11 @@ WollokReducedLoader >> loadInto: anInterpreter [
 
 	self addBindingOfClass: 'wollok.lang.Collection' of: #wollokLangCollection in: anInterpreter. 
 	self addBindingOfClass: 'wollok.lang.Set' of: #wollokLangSet in: anInterpreter natives: {	
-		{'++1'.[ :a :b | a , b ]. 'List'. 'binario'}.
 		} .
 	self addBindingOfClass: 'wollok.lang.List' of: #wollokLangList in: anInterpreter natives: {	
-		{'++1'.[ :a :b | a , b ]. 'List'. 'binario'}.
+		{'size0'.[ :a :b | a size ]. 'Number'. 'comun'}.
+		{'contains1'.[ :a :b | a includes:  b first ]. 'Boolean'. 'comun'}.
+		
 		}.
 
 	self addBindingOfClass: 'wollok.lang.String' of: #wollokLangString in: anInterpreter natives: {

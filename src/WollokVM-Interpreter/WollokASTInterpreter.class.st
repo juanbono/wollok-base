@@ -302,7 +302,10 @@ result := condition literalValue
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> visitListLiteral: aWollokListLiteralNode [ 
-	self shouldBeImplemented.
+	| elementos |
+	elementos  := aWollokListLiteralNode elements collect: [:elem | elem acceptVisitor: self].
+	^self wollokCollectionFrom: elementos  class: 'List'
+	
 ]
 
 { #category : #'as yet unclassified' }
@@ -425,10 +428,20 @@ WollokASTInterpreter >> wollokBooleanFrom: anBoolean [
 ]
 
 { #category : #literals }
+WollokASTInterpreter >> wollokCollectionFrom: aValue class: className [ 
+	^ WollokVMCollection new
+		wollokClass: (self resolve: 'wollok.lang.', className);
+		literalValue: aValue;
+		ambiente:ambiente;
+		yourself
+]
+
+{ #category : #literals }
 WollokASTInterpreter >> wollokLiteralFrom: aValue class: className [ 
 	^ WollokVMLiteral new
 		wollokClass: (self resolve: 'wollok.lang.', className);
 		literalValue: aValue;
+		ambiente:ambiente;
 		yourself
 ]
 
