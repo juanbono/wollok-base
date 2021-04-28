@@ -63,7 +63,7 @@ WollokVMAmbiente >> resolverReferencia: identificador [
 ^(referencias keys includes: identificador)
 	ifTrue: [ referencias at: identificador]
 	ifFalse: [ ambienteMayor 
-		ifNil: [ self error ]
+		ifNil: [ ^nil ]
 		ifNotNil: [ ambienteMayor resolverReferencia: identificador ]
 	]
 ]

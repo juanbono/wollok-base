@@ -13,7 +13,7 @@ WollokVMWellKnownObjectsTest >> setUp [
 object myObject { 
 	var a = 7
 	
-	method getVar(){
+	method getA(){
 		return a
 	}
 }
@@ -37,8 +37,8 @@ WollokVMWellKnownObjectsTest >> testWellKnownObjectHasTheCorrectClass [
 
 	object := self interpretExpression: 'myObject'.
 	
-	"This test depends of how the classes of literal objects are implemented"
-	self fail.
+	self assert: object wollokClassName equals: 'myObject'
+	
 ]
 
 { #category : #'as yet unclassified' }

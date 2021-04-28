@@ -43,6 +43,38 @@ WollokASTInterpreter >> ambienteActual: aWollokVMAmbiente [
 	ambienteActual := aWollokVMAmbiente
 ]
 
+{ #category : #'as yet unclassified' }
+WollokASTInterpreter >> crearObjetoDe: clase [ 
+	|instancia   metodoInitialize|
+	
+	instancia := WollokVMObject new
+		wollokClass: clase;
+		ambiente: (WollokVMAmbiente new 
+						ambienteMayor: ambiente;
+						ambienteAnterior: self ambienteActual;
+						yourself)
+		yourself.
+	
+	(self todosLosAtributosDe:clase) do: [:atr | 
+		instancia 
+			inicializarAtributo: (atr identificador) 
+			conValor: (atr expresionInicial 
+								ifNil: [ self nullValue ] 
+								ifNotNil: [atr expresionInicial  acceptVisitor:self ]).
+	].
+	"REVISAR"
+	"instancia setearAtributosRecibidos: aWollokConstructorCallNode argumentos."
+	metodoInitialize := self lookUp: 'initialize0' desde: instancia wollokClass.
+	metodoInitialize 
+		ifNotNil: [ 	
+			"ambienteAnterior := self ambienteActual.
+			self ambienteActual: instancia ambiente. "
+			self ejecutar: metodoInitialize con: #() sobre: instancia ].
+			"self ambienteActual: ambienteAnterior."
+	^instancia
+
+]
+
 { #category : #accessing }
 WollokASTInterpreter >> debeRetornar [
 	^ debeRetornar
@@ -129,7 +161,7 @@ WollokASTInterpreter >> isFalse: object [
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> isNull: anWollokVMObject [ 
-	^anWollokVMObject isNil.
+	^anWollokVMObject = self nullValue.
 ]
 
 { #category : #'as yet unclassified' }
@@ -156,6 +188,11 @@ WollokASTInterpreter >> lookUp: selector desde: clase [
 ]
 
 { #category : #'as yet unclassified' }
+WollokASTInterpreter >> nullValue [
+	^#null
+]
+
+{ #category : #'as yet unclassified' }
 WollokASTInterpreter >> objetoActual [
 	^ objetoActual
 ]
@@ -168,7 +205,7 @@ WollokASTInterpreter >> objetoActual: aWollokVMObject [
 { #category : #bindings }
 WollokASTInterpreter >> resolve: aString [ 
 	
-	^ bindings at: aString
+	^ bindings at: aString ifAbsent:[nil]
 ]
 
 { #category : #'as yet unclassified' }
@@ -258,35 +295,12 @@ WollokASTInterpreter >> visitBooleanLiteral: aWollokBooleanLiteralNode [
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> visitConstructorCall: aWollokConstructorCallNode [ 
-	|instancia  clase metodoInitialize "ambienteAnterior"|
+	|  clase |
 	
 	clase := self resolve: (aWollokConstructorCallNode classRef acceptVisitor: self).
 	
-	instancia := WollokVMObject new
-		wollokClass: clase;
-		ambiente: (WollokVMAmbiente new 
-						ambienteMayor: ambiente;
-						ambienteAnterior: self ambienteActual;
-						yourself)
-		yourself.
+	^self crearObjetoDe: clase.
 	
-	(self todosLosAtributosDe:clase) do: [:atr | 
-		instancia 
-			inicializarAtributo: (atr identificador) 
-			conValor: (atr expresionInicial 
-								ifNil: [ nil ] 
-								ifNotNil: [atr expresionInicial  acceptVisitor:self ]).
-	].
-	"REVISAR"
-	"instancia setearAtributosRecibidos: aWollokConstructorCallNode argumentos."
-	metodoInitialize := self lookUp: 'initialize0' desde: instancia wollokClass.
-	metodoInitialize 
-		ifNotNil: [ 	
-			"ambienteAnterior := self ambienteActual.
-			self ambienteActual: instancia ambiente. "
-			self ejecutar: metodoInitialize con: #() sobre: instancia ].
-			"self ambienteActual: ambienteAnterior."
-	^instancia
 
 ]
 
@@ -406,7 +420,15 @@ className := classNames at: aWollokUnaryOperationNode operation value.
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> visitVariable: aWollokVariableNode [ 
-	^self ambienteActual resolverReferencia: aWollokVariableNode identificador
+	| referencia identificador wko|
+	identificador := aWollokVariableNode identificador.
+	referencia := self ambienteActual resolverReferencia: identificador.
+	referencia ifNotNil: [ ^referencia ]. 
+	
+	wko := self resolve: identificador.
+	wko ifNil: [ ^self error:'no existe identificador' ]. 
+	
+	^self crearObjetoDe: wko.
 ]
 
 { #category : #'as yet unclassified' }
