@@ -31,7 +31,7 @@ WollowVMInterpreterNumberTests >> testComparingLowerThanTwoNumbersIsAWollokBoole
 
 	maybeANumber := self interpretExpression: '1 < 2.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Boolean'
+	self assert: maybeANumber wollokClassName equals: 'Boolean'
 ]
 
 { #category : #'tests - operations' }
@@ -41,7 +41,7 @@ WollowVMInterpreterNumberTests >> testComparingTwoNumbersIsAWollokBoolean [
 
 	maybeANumber := self interpretExpression: '1 > 2.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Boolean'
+	self assert: maybeANumber wollokClassName equals: 'Boolean'
 ]
 
 { #category : #'tests - operations' }
@@ -61,7 +61,7 @@ WollowVMInterpreterNumberTests >> testDifferenceOfTwoNumbersWithDecimalsIsAWollo
 
 	maybeANumber := self interpretExpression: '1 - 2.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - operations' }
@@ -81,7 +81,7 @@ WollowVMInterpreterNumberTests >> testLiteralDecimalNumberIsAWollokNumber [
 
 	maybeANumber := self interpretExpression: '1.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - constants' }
@@ -91,7 +91,7 @@ WollowVMInterpreterNumberTests >> testLiteralNegativeDecimalNumberIsAWollokNumbe
 
 	maybeANumber := self interpretExpression: '-1.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - constants' }
@@ -101,7 +101,7 @@ WollowVMInterpreterNumberTests >> testLiteralNegativeNumberIsAWollokNumber [
 
 	maybeANumber := self interpretExpression: '-2'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - constants' }
@@ -111,7 +111,7 @@ WollowVMInterpreterNumberTests >> testLiteralNumberIsAWollokNumber [
 
 	maybeANumber := self interpretExpression: '1'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - constants' }
@@ -161,7 +161,7 @@ WollowVMInterpreterNumberTests >> testSumOfTwoNumbersIsAWollokNumber [
 
 	maybeANumber := self interpretExpression: '1 + 2'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - operations' }
@@ -181,7 +181,7 @@ WollowVMInterpreterNumberTests >> testSumOfTwoNumbersWithDecimalsIsAWollokNumber
 
 	maybeANumber := self interpretExpression: '1 + 2.73'.
 
-	self assert: maybeANumber wollokClassName equals: 'wollok.lang.Number'
+	self assert: maybeANumber wollokClassName equals: 'Number'
 ]
 
 { #category : #'tests - operations' }

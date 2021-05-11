@@ -7,18 +7,7 @@ Class {
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterpreter [
 
-	| anAST aWollokClass |
-	
-	anAST := WollokParser parse: aString.
-	anAST attributeNamed: #source put: aString.
-	
-	aWollokClass := WollokVMClass new
-		name: aName;
-		ast: anAST;
-		configurar;
-		yourself.
-	
-	anInterpreter addBinding: aName value: aWollokClass.
+	^self addBindingOfClass: aName fromString: aString in: anInterpreter natives: #()
 ]
 
 { #category : #'as yet unclassified' }
@@ -41,7 +30,8 @@ WollokReducedLoader >> addBindingOfClass: aName fromString: aString in: anInterp
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> addBindingOfClass: aName of: selector in: anInterpreter [
 
-	self addBindingOfClass: aName fromString: (self perform: selector) in: anInterpreter 
+	self addBindingOfClass: aName of: selector in: anInterpreter natives: #()
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -53,10 +43,11 @@ WollokReducedLoader >> addBindingOfClass: aName of: selector in: anInterpreter n
 { #category : #'as yet unclassified' }
 WollokReducedLoader >> loadInto: anInterpreter [
 
-	self addBindingOfClass: 'wollok.lang.Object' of: #wollokLangObject in: anInterpreter natives: {
+	self addBindingOfClass: 'Object' of: #wollokLangObject in: anInterpreter natives: {
 		{'===1'.[ :a :b | a == b ]. 'Boolean'. 'binario'}.
+		{'checkNotNull2'.[ :a :b | b first ifNil: [ self error ]]. nil. 'comun'}.
 		}.
-	self addBindingOfClass: 'wollok.lang.Number' of: #wollokLangNumber in: anInterpreter natives: {
+	self addBindingOfClass: 'Number' of: #wollokLangNumber in: anInterpreter natives: {
 		{'truncate1'. [:r :args | (r truncateTo: (1/10 raisedTo: args first)) asFloat ]. 'Number'.'comun'}.
 		{'>1'. [ :a :b | a > b ]. 'Boolean'. 'binario'}.
 		{'<1'. [ :a :b | a < b ]. 'Boolean'. 'binario'}.
@@ -70,27 +61,34 @@ WollokReducedLoader >> loadInto: anInterpreter [
 		{'===1'.[ :a :b | a == b ]. 'Boolean'. 'binario'}.
 		} .
 
-	self addBindingOfClass: 'wollok.lang.Boolean' of: #wollokLangBoolean in: anInterpreter natives: {
+	self addBindingOfClass: 'Boolean' of: #wollokLangBoolean in: anInterpreter natives: {
 		{'&&1'. [ :a :b | a & b ]. 'Boolean'. 'binario'}.
 		{'||1'. [ :a :b | a | b ]. 'Boolean'. 'binario'}.
 		{'==1'.[ :a :b | a = b ]. 'Boolean'. 'binario'}.
 		} .
 
-	self addBindingOfClass: 'wollok.lang.Collection' of: #wollokLangCollection in: anInterpreter. 
-	self addBindingOfClass: 'wollok.lang.Set' of: #wollokLangSet in: anInterpreter natives: {	
+	self addBindingOfClass: 'Collection' of: #wollokLangCollection in: anInterpreter. 
+	self addBindingOfClass: 'Set' of: #wollokLangSet in: anInterpreter natives: {	
 		} .
-	self addBindingOfClass: 'wollok.lang.List' of: #wollokLangList in: anInterpreter natives: {	
+	self addBindingOfClass: 'List' of: #wollokLangList in: anInterpreter natives: {	
 		{'size0'.[ :a :b | a size ]. 'Number'. 'comun'}.
-		{'contains1'.[ :a :b | a includes:  b first ]. 'Boolean'. 'comun'}.
-		
+		{'filter1'.[ :a :b | a select: b first ]. 'List'. 'comun'}.
+		{'contains1'.[ :a :b | a anySatisfy: [:x | x literalValue = b first literalValue]]. 'Boolean'. 'comun'.'obj'}.
+"		{'contains1'.[ :a :b | a includes:  b first ]. 'Boolean'. 'comun'.'obj'}."
+		{ 'fold2'. [ :a :b | a inject: b first into: b last literalValue] .'obj'. 'comun'.'obj' }.
 		}.
 
-	self addBindingOfClass: 'wollok.lang.String' of: #wollokLangString in: anInterpreter natives: {
-		{'concat1'. [ :a :b | a , b first]. 'String'. 'comun'}.
+	self addBindingOfClass: 'String' of: #wollokLangString in: anInterpreter natives: {
+		{'concat1'. [ :a :b | a , b first]. 'String'. 'comun' }.
 		{'toString0'. [ :a :b | a ]. 'String'. 'comun'}.
 		}.
 
-	self addBindingOfClass: 'wollok.lang.Exception' of: #wollokLangException in: anInterpreter.							 
+	self addBindingOfClass: 'Exception' of: #wollokLangException in: anInterpreter.		
+			
+	self addBindingOfClass: 'Closure' of: #wollokLangClosure in: anInterpreter natives: {	
+		{'apply0'. [ :a :b | a value].'obj'. 'comun' }.				 "Ojo! retorna un objeto"
+		{'apply1'. [ :a :b | a value: b first]. 'obj'. 'comun'. 'obj' }.	
+		}. 
 ]
 
 { #category : #'as yet unclassified' }
@@ -129,6 +127,28 @@ WollokReducedLoader >> wollokLangBoolean [
 
   /** NOT logical operation */
   method negate() native
+}
+'
+]
+
+{ #category : #'as yet unclassified' }
+WollokReducedLoader >> wollokLangClosure [
+
+^ 'class Closure {
+
+  /** Evaluates this closure passing its parameters
+   *
+   * Example:
+   *     { number => number + 1 }.apply(8) ==> Answers 9 // 1 parameter
+   *     { "screw" + "driver" }.apply()    ==> Answers "screwdriver" // no parameter
+   */
+  method apply() native
+  method apply(param) native
+  method apply(param1,param2) native
+
+  /** String representation of this closure object */
+  override method toString() native
+
 }
 '
 ]
@@ -1671,6 +1691,9 @@ WollokReducedLoader >> wollokLangObject [
   }
 
   method doMessageNotUnderstood(messageName, parameters) native
+
+  /** @private */
+  method checkNotNull(value, message) native
 }'
 ]
 

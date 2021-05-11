@@ -19,7 +19,7 @@ WollowVMInterpreterStringTests >> testConcatenationOfStringsIsAWollokString [
 	| object |
 	
 	object := self interpretExpression: '"abc" + "123"'.
-	self assert: object wollokClassName equals: 'wollok.lang.String'
+	self assert: object wollokClassName equals: 'String'
 ]
 
 { #category : #tests }
@@ -37,5 +37,5 @@ WollowVMInterpreterStringTests >> testConstantStringIsAWollokString [
 	| object |
 	
 	object := self interpretExpression: '"abc"'.
-	self assert: object wollokClassName equals: 'wollok.lang.String'
+	self assert: object wollokClassName equals: 'String'
 ]

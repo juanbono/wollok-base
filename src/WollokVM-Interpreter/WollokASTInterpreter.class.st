@@ -18,7 +18,7 @@ WollokASTInterpreter class >> baseClassName [
 	"comment stating purpose of class-side message"
 	"scope: class-variables  &  class-instance-variables"	
 			
-	^'wollok.lang.Object' 
+	^'Object' 
 ]
 
 { #category : #bindings }
@@ -116,12 +116,19 @@ self ambienteActual: (self ambienteActual ambienteAnterior).
 
 { #category : #'as yet unclassified' }
 WollokASTInterpreter >> ejecutarNativo: metodo con: argumentos sobre: receptor [
-|nativo resultado|
+|nativo resultado argumentosEvaluados|
 nativo := metodo buscarNativo.
+nativo ifNil: [  self error: 'No está definido el método nativo ', metodo selector ].
 
-resultado := nativo ejecutarCon: (argumentos collect:[:a | a literalValue]) sobre: receptor literalValue.
+argumentosEvaluados := nativo argumentoWObject 
+	ifTrue: [ argumentos ]
+	ifFalse: [ argumentos collect:[:a | a literalValue]].
 
-^ self wollokLiteralFrom: resultado class: nativo claseRetorno   
+resultado := nativo ejecutarCon: argumentosEvaluados sobre: receptor literalValue.
+
+^nativo retornoWObject 
+	ifTrue: [ resultado ]
+	ifFalse: [self wollokLiteralFrom: resultado class: nativo claseRetorno ]
 ]
 
 { #category : #interpreting }
@@ -284,13 +291,28 @@ WollokASTInterpreter >> visitBlockExpression: aWollokBlockExpressionNode [
 	aWollokBlockExpressionNode expressions do:
 		[ :exp | resultado := exp acceptVisitor: self.
 					self debeRetornar ifTrue: [ ^resultado ] ].
-	^nil
+	^resultado
 ]
 
 { #category : #visiting }
 WollokASTInterpreter >> visitBooleanLiteral: aWollokBooleanLiteralNode [ 
 
 	^ self wollokBooleanFrom: aWollokBooleanLiteralNode value value = 'true'
+]
+
+{ #category : #'as yet unclassified' }
+WollokASTInterpreter >> visitClosure: aWollokClosureNode [ 
+	|bloque |
+	
+	bloque := WollokVMBClosure new 
+		expresiones: aWollokClosureNode expression;
+	"	ambienteExterior: self ambienteActual; "
+		ambiente: self ambienteActual; "  Revisar "
+		interprete: self;
+		wollokClass: (self resolve:'Closure');
+		parametros: aWollokClosureNode parameters;
+		yourself.
+	^bloque
 ]
 
 { #category : #'as yet unclassified' }
@@ -352,7 +374,7 @@ WollokASTInterpreter >> visitMethodDeclaration: aWollokMethodDeclarationNode [
 { #category : #visiting }
 WollokASTInterpreter >> visitNumberLiteral: aWollokNumberLiteralNode [ 
 
-	^ self wollokNumberFrom: aWollokNumberLiteralNode numberValue
+	^ self wollokLiteralFrom: aWollokNumberLiteralNode numberValue class:'Number'
 ]
 
 { #category : #'as yet unclassified' }
@@ -444,7 +466,7 @@ WollokASTInterpreter >> visitVariableDeclaration: aWollokVariableDeclarationNode
 { #category : #literals }
 WollokASTInterpreter >> wollokBooleanFrom: anBoolean [
 	^ WollokVMLiteral new
-		wollokClass: (self resolve: 'wollok.lang.Boolean');
+		wollokClass: (self resolve: 'Boolean');
 		literalValue: anBoolean;
 		yourself
 ]
@@ -452,7 +474,7 @@ WollokASTInterpreter >> wollokBooleanFrom: anBoolean [
 { #category : #literals }
 WollokASTInterpreter >> wollokCollectionFrom: aValue class: className [ 
 	^ WollokVMCollection new
-		wollokClass: (self resolve: 'wollok.lang.', className);
+		wollokClass: (self resolve: className);
 		literalValue: aValue;
 		ambiente:ambiente;
 		yourself
@@ -461,7 +483,7 @@ WollokASTInterpreter >> wollokCollectionFrom: aValue class: className [
 { #category : #literals }
 WollokASTInterpreter >> wollokLiteralFrom: aValue class: className [ 
 	^ WollokVMLiteral new
-		wollokClass: (self resolve: 'wollok.lang.', className);
+		wollokClass: (self resolve: className);
 		literalValue: aValue;
 		ambiente:ambiente;
 		yourself
@@ -471,7 +493,7 @@ WollokASTInterpreter >> wollokLiteralFrom: aValue class: className [
 WollokASTInterpreter >> wollokNumberFrom: anInteger [ 
 
 	^ WollokVMLiteral new
-		wollokClass: (self resolve: 'wollok.lang.Number');
+		wollokClass: (self resolve: 'Number');
 		literalValue: anInteger;
 		yourself
 ]

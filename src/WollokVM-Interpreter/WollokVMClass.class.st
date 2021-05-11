@@ -63,7 +63,7 @@ WollokVMClass >> atributos [
 
 { #category : #'as yet unclassified' }
 WollokVMClass >> buscarNativo: selector [ 
-	^nativos at: selector ifAbsent: nil
+	^nativos at: selector ifAbsent: nil 
 ]
 
 { #category : #accessing }
@@ -100,6 +100,7 @@ definicionesNativas do: [:definicion |
 			expresion: (definicion at:2);
 			claseRetorno: (definicion at:3);
 			tipo: (definicion at:4);
+			claseArgumentos: (definicion size > 4 ifTrue: [definicion at:5] )
 			yourself)
 		]. 
 
@@ -108,6 +109,7 @@ superClase := (name = WollokASTInterpreter baseClassName)
 	ifTrue: [ nil ]
 	ifFalse: [ posibleSuperClase 
 		ifNil: [ WollokASTInterpreter baseClassName ] 
+"		ifNotNil: [posibleSuperClase asWollokCompleteName ]"
 		ifNotNil: [posibleSuperClase asWollokQualifiedName ]
  	].
 ]

@@ -4,10 +4,26 @@ Class {
 	#instVars : [
 		'expresion',
 		'claseRetorno',
-		'tipo'
+		'tipo',
+		'claseArgumentos'
 	],
 	#category : #'WollokVM-Interpreter'
 }
+
+{ #category : #'as yet unclassified' }
+WollokVMNative >> argumentoWObject [
+	^	claseArgumentos = 'obj'
+]
+
+{ #category : #accessing }
+WollokVMNative >> claseArgumentos [
+	^ claseArgumentos
+]
+
+{ #category : #accessing }
+WollokVMNative >> claseArgumentos: anObject [
+	claseArgumentos := anObject
+]
 
 { #category : #accessing }
 WollokVMNative >> claseRetorno [
@@ -36,6 +52,11 @@ tipo = 'unario'
 { #category : #'as yet unclassified' }
 WollokVMNative >> expresion: aBlockClosure [ 
 	expresion := aBlockClosure
+]
+
+{ #category : #'as yet unclassified' }
+WollokVMNative >> retornoWObject [
+	^	claseRetorno = 'obj'
 ]
 
 { #category : #'as yet unclassified' }
