@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 WollokVMLiteral >> booleanValue [
-	self shouldBeImplemented.
+	^self literalValue = true.
 ]
 
 { #category : #accessing }

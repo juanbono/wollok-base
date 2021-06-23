@@ -72,7 +72,8 @@ WollokReducedLoader >> loadInto: anInterpreter [
 		} .
 	self addBindingOfClass: 'List' of: #wollokLangList in: anInterpreter natives: {	
 		{'size0'.[ :a :b | a size ]. 'Number'. 'comun'}.
-		{'filter1'.[ :a :b | a select: b first ]. 'List'. 'comun'}.
+		{'max0'.[ :a :b | a max: [ :x | x literalValue ] ]. 'Number'. 'comun'}.
+		{'filter1'.[ :a :b | a select: [:x | (b first literalValue value:x) booleanValue]]. 'List'. 'comun'.'obj'}.
 		{'contains1'.[ :a :b | a anySatisfy: [:x | x literalValue = b first literalValue]]. 'Boolean'. 'comun'.'obj'}.
 "		{'contains1'.[ :a :b | a includes:  b first ]. 'Boolean'. 'comun'.'obj'}."
 		{ 'fold2'. [ :a :b | a inject: b first into: b last literalValue] .'obj'. 'comun'.'obj' }.
